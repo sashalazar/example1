@@ -1,0 +1,10 @@
+# dotnet tool install --global dotnet-ef
+dotnet tool update --global dotnet-ef
+
+dotnet ef migrations add InitialIdentityServerPersistedGrantDbMigration -c PersistedGrantDbContext -o Data/Migrations/PersistedGrantDb
+dotnet ef migrations add InitialIdentityServerConfigurationDbMigration -c ConfigurationDbContext -o Data/Migrations/ConfigurationDb
+dotnet ef migrations add InitialIdentityServerAuthDbMigration -c AuthDbContext -o Data/Migrations/AuthDb
+
+dotnet ef database update --context AuthDbContext
+dotnet ef database update --context ConfigurationDbContext
+dotnet ef database update --context PersistedGrantDbContext
