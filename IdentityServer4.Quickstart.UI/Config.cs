@@ -4,12 +4,16 @@
 
 using IdentityServer4.Models;
 using System.Collections.Generic;
+using System.Runtime.InteropServices.ComTypes;
 using IdentityModel;
+using Microsoft.AspNetCore.Identity;
 
 namespace IdentityServer4.Quickstart.UI
 {
     public static class Config
     {
+        private static readonly string _apiName = $"api1";
+
         public static IEnumerable<IdentityResource> IdentityResources =>
             new List<IdentityResource>
             {
@@ -21,18 +25,23 @@ namespace IdentityServer4.Quickstart.UI
         public static IEnumerable<ApiScope> ApiScopes =>
             new ApiScope[]
             {
-                new ApiScope(name: "api1"),
+                new ApiScope(name: _apiName),
             };
 
         public static IEnumerable<ApiResource> GetApiResources()
         {
             return new List<ApiResource>
             {
-                new ApiResource
+                new ApiResource(_apiName, _apiName)
                 {
-                    Name = "api1",
-                    Scopes = {"api1"}
-                }
+                    UserClaims = { JwtClaimTypes.Role, JwtClaimTypes.Name, JwtClaimTypes.Id },
+                    Scopes = { _apiName }
+                },
+                //new ApiResource
+                //{
+                //    Name = _apiName,
+                //    Scopes = { _apiName }
+                //}
             };
         }
 
@@ -47,7 +56,7 @@ namespace IdentityServer4.Quickstart.UI
 
                     AllowedGrantTypes = GrantTypes.ClientCredentials,
                     // scopes that client has access to
-                    AllowedScopes = {"api1"}
+                    AllowedScopes = { _apiName }
                 },
                 // interactive ASP.NET Core MVC client
                 new Client
@@ -90,7 +99,7 @@ namespace IdentityServer4.Quickstart.UI
                     {
                         IdentityServerConstants.StandardScopes.OpenId,
                         IdentityServerConstants.StandardScopes.Profile,
-                        "api1"
+                        _apiName
                     }
                 },
 
@@ -110,9 +119,20 @@ namespace IdentityServer4.Quickstart.UI
                     {
                         IdentityServerConstants.StandardScopes.OpenId,
                         IdentityServerConstants.StandardScopes.Profile,
-                        "api1"
+                        _apiName
                     }
                 }
             };
+
+        public static IEnumerable<IdentityRole<int>> GetRoles()
+        {
+            return new List<IdentityRole<int>>()
+            {
+                new IdentityRole<int> { Name = "Admin" },
+                new IdentityRole<int> { Id = 12, Name = "Vendor" },
+                new IdentityRole<int> { Id = 13, Name = "Buyer" },
+                new IdentityRole<int> { Id = 14, Name = "Processing" }
+            };
+        }
     }
 }
